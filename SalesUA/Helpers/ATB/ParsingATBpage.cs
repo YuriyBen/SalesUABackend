@@ -11,9 +11,9 @@ namespace SalesUA.Helpers.ATB
 {
     public static class ParsingATBpage
     {
-        public static  List<Product> Parsing(/*List<Product> ATB*/)
+        public static  List<Product> Parsing()
         {
-            List<Product> ATB = new List<Product>();
+            List<Product> ATBproducts = new List<Product>();
             HtmlWeb webSiteToParse = new HtmlWeb();
             HtmlDocument document = webSiteToParse.Load("https://www.atbmarket.com/hot/akcii/economy/");
             string xpathCommon = "//div[@class='container']//div[@class='list_wrapper']//div" +
@@ -46,11 +46,11 @@ namespace SalesUA.Helpers.ATB
             for (int i = 0; i < listOfTitle.Count; i++)
             {
                
-                ATB.Add(new Product(listOfTitle[i], listOfDescription[i], listOfImageUrls[i],
+                ATBproducts.Add(new Product(listOfTitle[i], listOfDescription[i], listOfImageUrls[i],
                     listOfOldPrices[i], listOfNewPrices[i], listOfDiscounts[i]));
 
             }
-            return ATB.ToList();
+            return ATBproducts;
         }
         static List<string> ImagesOfAllItems(HtmlDocument document, string xPathToImageUrl)
         {
@@ -116,7 +116,7 @@ namespace SalesUA.Helpers.ATB
             List<decimal> listOfOldPrices = new List<decimal>();
             foreach (var item in nodesToOldPrice)
             {
-                string OldPriceText = item.InnerText;
+                string OldPriceText = item.InnerText.Replace('.', ',');
                 if (!decimal.TryParse(OldPriceText, out decimal OldPrice))
                 {
                     OldPrice = 0;
