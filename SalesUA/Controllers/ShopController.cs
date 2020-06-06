@@ -46,12 +46,13 @@ namespace SalesUA.Controllers
         {
             try
             {
-                var productsInDefinedShop = _context.Product.FirstOrDefault(p => p.ShopId == shopId);
+                var productsInDefinedShop = _context.Shop.FirstOrDefault(p => p.Id == shopId);
                 if(productsInDefinedShop is null)
                 {
                     return NotFound();
                 }
-                return Ok(_mapper.Map<ProductDTO>(productsInDefinedShop));
+                var finished = _mapper.Map<IEnumerable<ShopDTO>>(productsInDefinedShop);
+                return Ok(finished);
             }
             catch (Exception ex)
             {
