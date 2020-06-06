@@ -7,7 +7,6 @@ namespace SalesUA.Models
 {
     public class ProductDTO
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public decimal OldPrice { get; set; }
         public decimal NewPrice { get; set; }

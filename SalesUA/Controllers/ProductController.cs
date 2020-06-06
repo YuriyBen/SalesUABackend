@@ -35,7 +35,7 @@ namespace SalesUA.Controllers
 
             var getProductsByParsing = ParsingPagesUsingShopId.GetListOfProductViaShopTitle(ShopById.Title);  //ParsingATBpage.Parsing();
 
-            return Ok(getProductsByParsing);
+            return Ok(_mapper.Map<IEnumerable<ProductDTO>>(getProductsByParsing));
         }
     }
 }

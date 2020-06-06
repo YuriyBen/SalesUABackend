@@ -11,7 +11,6 @@ namespace SalesUA.Models
         public string Title { get; set; }
         public string ImagePath { get; set; }
 
-        public virtual /*ICollection<ProductDTO>*/ List<ProductDTO> Product { get; set; }
-
+        
     }
 }

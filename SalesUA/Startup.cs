@@ -30,6 +30,11 @@ namespace SalesUA
         {
             services.AddControllers();
 
+            services.AddCors(options => options.AddPolicy("SalesUA",
+                             builer => builer.AllowAnyOrigin()
+                                             .AllowAnyMethod()
+                                             .AllowAnyHeader() ));
+
             services.AddDbContext<SalesProjectContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("SalesDB")));
 
@@ -47,6 +52,8 @@ namespace SalesUA
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("SalesUA");
 
             app.UseAuthorization();
 
