@@ -40,56 +40,18 @@ namespace SalesUA.Helpers.ATB
             string xPathToDiscount = xPathToPricesCommon + "//div[@class='economy_price_container']//div[@class='economy_price']//span";
             var listOfDiscounts = DiscountsOfAllItems(document, xPathToDiscount, listOfOldPrices);
 
+            string xPathToNewPrice = xPathToPricesCommon + "//div[@class='promo_price']";
+            var listOfNewPrices = NewPricesOfAllItems(document, xPathToNewPrice);
+
             for (int i = 0; i < listOfTitle.Count; i++)
             {
-                decimal newPrice = listOfOldPrices[i].ComputeDiscountedPrice(listOfDiscounts[i]);
-
+               
                 ATB.Add(new Product(listOfTitle[i], listOfDescription[i], listOfImageUrls[i],
-                    listOfOldPrices[i], newPrice, listOfDiscounts[i]));
+                    listOfOldPrices[i], listOfNewPrices[i], listOfDiscounts[i]));
 
             }
             return ATB.ToList();
         }
-       
-        //public static List<Product> Parsing (this ICollection<Product> ATB)
-        //{
-        //    //List<ProductDTO> ATB = new List<ProductDTO>();
-        //    HtmlWeb webSiteToParse = new HtmlWeb();
-        //    HtmlDocument document = webSiteToParse.Load("https://www.atbmarket.com/hot/akcii/economy/");
-        //    string xpathCommon = "//div[@class='container']//div[@class='list_wrapper']//div" +
-        //        "//ul[@id='cat0']//li";
-
-        //    string xPathToImageUrl = xpathCommon + "//div[@class='promo_image_wrap']//a[@class='promo_image_link']//img";
-        //    var listOfImageUrls = ImagesOfAllItems(document, xPathToImageUrl);
-
-        //    string xPathToInfo = xpathCommon + "//div[@class='promo_info']";
-
-        //    string xPathToTitle = xPathToInfo + "//span[@class='promo_info_text']";
-        //    var listOfTitle = TitlesOfAllItems(document, xPathToTitle);
-
-        //    string xPathToDescription = xPathToTitle + "//span";
-        //    var listOfDescription = DescriptionOfAllItems(document, xPathToDescription);
-
-
-        //    string xPathToPricesCommon = xPathToInfo + "//div[@class='price_box small_box red_box floated_right']";
-
-
-        //    string xPathToOldrice = xPathToPricesCommon + "//span[@class='promo_old_price']";
-        //    var listOfOldPrices = OldPricesOfAllItems(document, xPathToOldrice);
-
-        //    string xPathToDiscount = xPathToPricesCommon + "//div[@class='economy_price_container']//div[@class='economy_price']//span";
-        //    var listOfDiscounts = DiscountsOfAllItems(document, xPathToDiscount, listOfOldPrices);
-
-        //    for (int i = 0; i < listOfTitle.Count; i++)
-        //    {
-        //        decimal newPrice = listOfOldPrices[i].ComputeDiscountedPrice(listOfDiscounts[i]);
-
-        //        ATB.Add(new Product(listOfTitle[i], listOfDescription[i], listOfImageUrls[i],
-        //            listOfOldPrices[i], newPrice, listOfDiscounts[i]));
-
-        //    }
-        //    return ATB.ToList();
-        //}
         static List<string> ImagesOfAllItems(HtmlDocument document, string xPathToImageUrl)
         {
             HtmlNode[] nodesToImageUrl = document.DocumentNode.SelectNodes(xPathToImageUrl).ToArray();
@@ -154,7 +116,7 @@ namespace SalesUA.Helpers.ATB
             List<decimal> listOfOldPrices = new List<decimal>();
             foreach (var item in nodesToOldPrice)
             {
-                string OldPriceText = item.InnerText.Replace('.', ',');
+                string OldPriceText = item.InnerText;
                 if (!decimal.TryParse(OldPriceText, out decimal OldPrice))
                 {
                     OldPrice = 0;
@@ -164,5 +126,20 @@ namespace SalesUA.Helpers.ATB
             }
             return listOfOldPrices;
         }
+
+        static List<decimal> NewPricesOfAllItems(HtmlDocument document, string xPathToNewPrice)
+        {
+            List<decimal> listOfNewPrices = new List<decimal>();
+            var nodesToNewPrice = document.DocumentNode.SelectNodes(xPathToNewPrice);
+            foreach (var item in nodesToNewPrice)
+            {
+                string newPriceText = Regex.Match(item.InnerText.Trim(), @"\d+").Value;
+                decimal newPrice = Convert.ToDecimal(newPriceText) / 100;
+                listOfNewPrices.Add(newPrice);
+            }
+            return listOfNewPrices;
+        }
+
+       
     }
 }

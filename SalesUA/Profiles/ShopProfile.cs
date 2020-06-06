@@ -14,9 +14,6 @@ namespace SalesUA.Profiles
         public ShopProfile()
         {
             CreateMap<Shop, ShopDTO>();
-                //.ForMember(
-                //dest => dest.Product,
-                //opt => opt.MapFrom(src => src.Product.Parsing()));   
         }
     }
 }

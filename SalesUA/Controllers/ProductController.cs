@@ -27,7 +27,7 @@ namespace SalesUA.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet("api/{shopId}/products")]
+        [HttpGet("api/shops/{shopId}/products")]
         public IActionResult Get(int shopId)
         {
             var ShopById = _context.Shop.FirstOrDefault(x => x.Id == shopId);

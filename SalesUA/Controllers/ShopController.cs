@@ -41,25 +41,6 @@ namespace SalesUA.Controllers
             }
         }
 
-        [HttpGet("{shopId}")]
-        public IActionResult AllItemsInSpecificShop(int shopId)
-        {
-            try
-            {
-                var productsInDefinedShop = _context.Shop.FirstOrDefault(p => p.Id == shopId);
-                if(productsInDefinedShop is null)
-                {
-                    return NotFound();
-                }
-                var finished = _mapper.Map<IEnumerable<ShopDTO>>(productsInDefinedShop);
-                return Ok(finished);
-            }
-            catch (Exception ex)
-            {
-                string ShopTitle = _context.Shop.Where(x => x.Id == shopId).Select(x => x.Title).ToString();
-                _logger.LogError($"Failed to get items in {ShopTitle}  : {ex}");
-                return BadRequest();
-            }
-        }
+       
     }
 }
