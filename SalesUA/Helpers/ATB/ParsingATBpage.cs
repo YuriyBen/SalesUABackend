@@ -112,11 +112,16 @@ namespace SalesUA.Helpers.ATB
         }
         static List<decimal> OldPricesOfAllItems(HtmlDocument document, string xPathToOldrice)
         {
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
             HtmlNode[] nodesToOldPrice = document.DocumentNode.SelectNodes(xPathToOldrice).ToArray();
             List<decimal> listOfOldPrices = new List<decimal>();
             foreach (var item in nodesToOldPrice)
             {
-                string OldPriceText = item.InnerText.Replace('.', ',');
+                string OldPriceText = item.InnerText;
                 if (!decimal.TryParse(OldPriceText, out decimal OldPrice))
                 {
                     OldPrice = 0;
@@ -126,7 +131,6 @@ namespace SalesUA.Helpers.ATB
             }
             return listOfOldPrices;
         }
-
         static List<decimal> NewPricesOfAllItems(HtmlDocument document, string xPathToNewPrice)
         {
             List<decimal> listOfNewPrices = new List<decimal>();
