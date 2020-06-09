@@ -72,7 +72,6 @@ namespace SalesUA.Helpers.ATB
             foreach (var item in nodesToTitle)
             {
                 string title = item.SelectSingleNode("text()").InnerText.Trim();
-                title = title.Replace('?', 'i');
                 listOfTitles.Add(title);
             }
             return listOfTitles;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SalesUA.Entities;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace SalesUA.Controllers
 {
     [ApiController]
-    
+
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
@@ -37,5 +38,6 @@ namespace SalesUA.Controllers
 
             return Ok(_mapper.Map<IEnumerable<ProductDTO>>(getProductsByParsing));
         }
+
     }
 }

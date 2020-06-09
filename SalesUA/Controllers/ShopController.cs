@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SalesUA.Controllers
 {
     [ApiController]
-    [Route("api/shop")]
+    [Route("api/shops")]
     public class ShopController:ControllerBase
     {
         private readonly ILogger<ShopController> _logger;

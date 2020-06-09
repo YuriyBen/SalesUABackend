@@ -1,5 +1,6 @@
 ﻿using SalesUA.Entities;
 using SalesUA.Helpers.ATB;
+using SalesUA.Helpers.Auchan;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,11 @@ namespace SalesUA.Helpers
                         break;
                     }
 
-
+                case "Ашан":
+                    {
+                        listOfProducts = ParsingAuchanPage.Parsing();
+                        break;
+                    }
             }
             return listOfProducts;
         }
