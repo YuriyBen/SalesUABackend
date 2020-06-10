@@ -31,12 +31,23 @@ namespace SalesUA.Controllers
         [HttpGet("api/shops/{shopId}/products")]
         public IActionResult Get(int shopId)
         {
-            var ShopById = _context.Shop.FirstOrDefault(x => x.Id == shopId);
-            var listOfProductsByShopId = ShopById.Product.ToList();
 
-            var getProductsByParsing = ParsingPagesUsingShopId.GetListOfProductViaShopTitle(ShopById.Title);  //ParsingATBpage.Parsing();
+            try
+            {
+                var ShopById = _context.Shop.FirstOrDefault(x => x.Id == shopId);
+                var listOfProductsByShopId = ShopById.Product.ToList();
 
-            return Ok(_mapper.Map<IEnumerable<ProductDTO>>(getProductsByParsing));
+                var getProductsByParsing = ParsingPagesUsingShopId.GetListOfProductViaShopTitle(ShopById.Title);  //ParsingATBpage.Parsing();
+
+                return Ok(_mapper.Map<IEnumerable<ProductDTO>>(getProductsByParsing));
+            }
+            catch (Exception ex)
+            {
+                string shopTitle = _context.Shop.Where(s => s.Id == shopId).Select(x => x.Title).FirstOrDefault();
+                _logger.LogError($"Failed to get all products in {shopTitle} : {ex}");
+                return BadRequest();
+            }
+
         }
 
     }

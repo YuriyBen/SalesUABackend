@@ -12,46 +12,51 @@ namespace SalesUA.Helpers.Auchan
     {
         public static List<Product> Parsing()
         {
+            HtmlWeb webSiteToParse = new HtmlWeb();
+            List<Product> productsAuchan = new List<Product>();
+            int pageNum = 2;
+            while (pageNum != 7)
+            {
+                HtmlDocument document = webSiteToParse.Load($"https://auchan.zakaz.ua/uk/promotions/?page={pageNum++}");
+
+                List<Product> listOfItemsFromPage = GetListOfProductsViaHTMLdocument(document);
+
+                productsAuchan.AddRange(listOfItemsFromPage);
+
+            }
+            return productsAuchan;
+        }
+        static List<Product> GetListOfProductsViaHTMLdocument(HtmlDocument document)
+        {
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
             List<Product> AuchanProducts = new List<Product>();
 
-            HtmlWeb webSiteToParse = new HtmlWeb();
-
-            HtmlDocument document = webSiteToParse.Load("https://auchan.ua/ua/superceny/?limit=96");
-
-            string xPathToAshanCommon = "//div[@class='main-container col2-left-layout container']//div[@class='main row']" +
-                "//div[@class='col-md-12']//div[@class='col-main']//div[@class='category-products']" +
-                "//ul[@class='products-grid products-grid--max-4-col']//li";
+            string xPathToAshanCommon = "//div[@class='jsx-899526249 products-box__list']//div[@class='jsx-899526249 products-box__list-item']";
 
             var nodeForEach = document.DocumentNode.SelectNodes(xPathToAshanCommon).ToArray();
 
-            for (int i = 0; i < nodeForEach.Length-1; i++)
+            foreach (var item in nodeForEach)
             {
-                var item = nodeForEach[i];
-                string url = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
-                    .ChildNodes.FirstOrDefault(x => x.Name == "picture")
+                string title = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
+                    .Attributes["title"]
+                    .Value;
+                string imageUrl = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
+                    .ChildNodes.FirstOrDefault(x => x.Name == "div")
                     .ChildNodes.FirstOrDefault(x => x.Name == "img")
                     .Attributes["src"]
                     .Value;
-                string title = item.ChildNodes.FirstOrDefault(x => x.Name == "div")
-                    .ChildNodes.FirstOrDefault(x => x.Name == "strong")
-                    .ChildNodes.FirstOrDefault(x => x.Name == "a")
-                    .InnerText;
-
-
-                string xPathToNewPrice = xPathToAshanCommon + "//div[@class='product-info']//div[@class='price-box']//p[@class='special-price']//span[@class='price']";
-                var nodesToImagePath = document.DocumentNode.SelectNodes(xPathToNewPrice).ToArray();
-
-                string newPriceText = nodesToImagePath[i].InnerText.Replace("грн", "").Trim();
-
-                decimal.TryParse(newPriceText, out decimal newPrice);
-
-                string discountText = item.ChildNodes.FirstOrDefault(x => x.Name == "div")
+                string pricesText = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
                     .ChildNodes.LastOrDefault(x => x.Name == "div")
+                    .ChildNodes.FirstOrDefault(x => x.Name == "div")
                     .InnerText;
-
-                byte.TryParse(Regex.Match(discountText, @"\d+").Value, out byte discount);
-                decimal oldPrice = Math.Round(newPrice * 100m / (100m-discount), 2);
-                AuchanProducts.Add(new Product(title, "", url, oldPrice, newPrice, discount));
+                decimal.TryParse(pricesText.Split("грн")[0], out decimal newPrice);
+                decimal.TryParse(pricesText.Split("грн")[1], out decimal oldPrice);
+                byte discount = (byte)(100 - Math.Round(newPrice / oldPrice * 100m, 0));
+                AuchanProducts.Add(new Product(title, "", imageUrl, oldPrice, newPrice, discount));
             }
             return AuchanProducts;
         }
