@@ -28,7 +28,7 @@ namespace SalesUA.Entities
         }
         string RefactoringText(string wordToRefactor)
         {
-            return wordToRefactor.Replace('?', 'i').Replace('<', '"').Replace('>', '"');
+            return wordToRefactor.Replace('?', 'i').Replace('<', '"').Replace('>', '"').Replace("&#x27;","'");
         }
 
     }
