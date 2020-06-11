@@ -1,6 +1,8 @@
 ﻿using SalesUA.Entities;
 using SalesUA.Helpers.ATB;
 using SalesUA.Helpers.Auchan;
+using SalesUA.Helpers.Metro;
+using SalesUA.Helpers.Rukavichka;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,17 @@ namespace SalesUA.Helpers
                 case "Ашан":
                     {
                         listOfProducts = ParsingAuchanPage.Parsing();
+                        break;
+                    }
+
+                case "Рукавичка":
+                    {
+                        listOfProducts = ParsingRukavichkaPage.Parsing();
+                        break;
+                    }
+                case "Метро":
+                    {
+                        listOfProducts = ParsingMetroPage.Parsing();
                         break;
                     }
             }

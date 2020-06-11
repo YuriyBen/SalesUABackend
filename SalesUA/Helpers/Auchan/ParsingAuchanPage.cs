@@ -41,7 +41,7 @@ namespace SalesUA.Helpers.Auchan
 
             foreach (var item in nodeForEach)
             {
-                string title = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
+                string description = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
                     .Attributes["title"]
                     .Value;
                 string imageUrl = item.ChildNodes.FirstOrDefault(x => x.Name == "a")
@@ -56,7 +56,7 @@ namespace SalesUA.Helpers.Auchan
                 decimal.TryParse(pricesText.Split("грн")[0], out decimal newPrice);
                 decimal.TryParse(pricesText.Split("грн")[1], out decimal oldPrice);
                 byte discount = (byte)(100 - Math.Round(newPrice / oldPrice * 100m, 0));
-                AuchanProducts.Add(new Product(title, "", imageUrl, oldPrice, newPrice, discount));
+                AuchanProducts.Add(new Product("",description,  imageUrl, oldPrice, newPrice, discount));
             }
             return AuchanProducts;
         }
